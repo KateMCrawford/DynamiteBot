@@ -1,65 +1,69 @@
+var dynamiteUsed = 0;
+var probGiven = Array[Array[0.3, 0.3, 0.3, 0.1, 0], Array[0.3, 0.3, 0.3, 0.1, 0], Array[0.3, 0.3, 0.3, 0.1, 0], Array[0.3, 0.3, 0.3, 0.1, 0], Array[0.3, 0.3, 0.3, 0.1, 0]];
+var probGivenOverNumber = Array[10, 10, 10, 10, 10];
+
+var nextMove = 'R';
+
 class Bot {
 
 
     constructor() {
-        this.possibleMoves = ['R', 'P', 'S', 'W', 'D'];
-        this.responseMoves = ['P', 'S', 'R', 'R', 'W'];
-        this.dynamiteUsed = 0;
-        this.dynamiteLimit = 1000;
-
-        this.probGiven = [[0.3, 0.3, 0.3, 0.1, 0], [0.3, 0.3, 0.3, 0.1, 0], [0.3, 0.3, 0.3, 0.1, 0], [0.3, 0.3, 0.3, 0.1, 0], [0.3, 0.3, 0.3, 0.1, 0]];
-        this.probGivenOverNumber = [1, 1, 1, 1, 1];
-
-        this.nextMove = 'P';
+        this.possibleMoves = Array['R', 'P', 'S', 'W', 'D'];
+        this.responseMoves = Array['P', 'S', 'R', 'R', 'W'];
+        this.dynamiteLimit = 100;
     }
 
     makeMove(gamestate) {
-        this.updateProbability;
-        this.beatPrediction;
-        console.log(this.nextMove);
-        return this.nextMove;
+
+        if (gamestate.rounds.length > 2) {
+            this.updateProbability(gamestate);
+            this.beatPrediction(gamestate);
+        }
+        //console.log(nextMove);
+        //console.log(probGiven);
+        return nextMove;
     }
 
-    updateProbability() {
-        var given = gamestate.getRounds()[gamestate.getRounds().length() - 1].getP1();
-        var response = gamestate.getRounds()[gamestate.getRounds().length()].getP2();
+    updateProbability(gamestate) {
+        if (gamestate.rounds.length > 2) {
+            var given = gamestate.rounds[gamestate.rounds.length - 2].p1;
+            var response = gamestate.rounds[gamestate.rounds.length - 1].p2;
 
-        var givenIndex = this.possibleMoves.indexOf(given);
-        var responseIndex = this.possibleMoves.indexOf(response);
+            var givenIndex = this.possibleMoves.indexOf(given);
+            var responseIndex = this.possibleMoves.indexOf(response);
 
-        updateGivenValues = this.probGiven[givenIndex];
 
-        for (i = 0; i <= 5; i++) {
-            if (i === responseIndex) {
-                updateGivenValues[i] = ((updateGivenValues[i] * this.probGivenOverNumber[givenIndex]) + 1) / (this.probGivenOverNumber[givenIndex] + 1);
-            } else {
-                updateGivenValues[i] = ((updateGivenValues[i] * this.probGivenOverNumber[givenIndex])) / (this.probGivenOverNumber[givenIndex] + 1);
+            for (var i = 0; i < 5; i++) {
+                if (i == responseIndex) {
+                    probGiven[givenIndex][i] = ((probGiven[givenIndex][i] * probGivenOverNumber[givenIndex]) + 1) / (probGivenOverNumber[givenIndex] + 1);
+                } else {
+                    probGiven[givenIndex][i] = ((probGiven[givenIndex][i] * probGivenOverNumber[givenIndex])) / (probGivenOverNumber[givenIndex] + 1);
+                }
             }
-        }
 
-        this.probGivenOverNumber[givenIndex]++;
+            probGivenOverNumber[givenIndex]++;
+        }
     }
 
-    beatPrediction() {
-        var mostLikelyMoveIndex = this.probGiven[gamestate.getRounds().length() - 1].indexOf(Math.max(...this.probGiven[gamestate.getRounds().length() - 1]));
+    beatPrediction(gamestate) {
 
-        switch (mostLikelyMoveIndex) {
-            case 0:
-                this.nextMove = this.possibleMoves[1];
-                break;
-            case 1:
-                this.nextMove = this.possibleMoves[2];
-                break;
-            case 2:
-                this.nextMove = this.possibleMoves[0];
-                break;
-            case 3:
-                this.nextMove = this.possibleMoves[1];
-                break;
-            case 4:
-                this.nextMove = this.possibleMoves[3];
-                break;
+        var lastPlayedState = gamestate.rounds[gamestate.rounds.length - 1].p1;
+        var lastPlayedIndex = this.possibleMoves.indexOf(lastPlayedState);
+
+        var random = Math.floor(Math.random() * 1000);
+
+        if (random < (1000 * this.probGiven[lastPlayedIndex][0])) {
+            nextMove = this.responseMoves[0];
+        } else if (random < (1000 * (probGiven[lastPlayedIndex][0] + probGiven[lastPlayedIndex][1]))) {
+            nextMove = this.responseMoves[1];
+        } else if (random < (1000 * (probGiven[lastPlayedIndex][0] + probGiven[lastPlayedIndex][1] + probGiven[lastPlayedIndex][2]))) {
+            nextMove = this.responseMoves[2];
+        } else if (random < (1000 * (probGiven[lastPlayedIndex][0] + probGiven[lastPlayedIndex][1] + probGiven[lastPlayedIndex][2] + probGiven[lastPlayedIndex][3]))) {
+            nextMove = this.responseMoves[3];
+        } else {
+            nextMove = this.responseMoves[4];
         }
+
     }
 }
 
