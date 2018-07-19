@@ -15,11 +15,6 @@ class Bot {
                 tieCount = 0;
             }
 
-            console.log(ourDynamiteUsed);
-            console.log(gamestate.rounds.length);
-            console.log(gamestate.rounds[gamestate.rounds.length - 1].p1);
-            console.log(gamestate.rounds[gamestate.rounds.length - 1].p2);
-
             if (ourDynamiteUsed < dynamiteLimit && tieCount >= 3) {
                 ourDynamiteUsed++;
                 return 'D';
