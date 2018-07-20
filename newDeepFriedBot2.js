@@ -58,12 +58,14 @@ class Bot {
 
         }
 
-        var modifier = (97 * tieCount)^4;
+        var modifier = (130 * tieCount)^4;
         var random2 = Math.floor(Math.random() * (600 + modifier));
 
-        if (ourDynamiteUsed < dynamiteLimit && random2 < modifier) {
+        if (ourDynamiteUsed < dynamiteLimit && random2 < (modifier * 2 / 3)) {
             ourDynamiteUsed++;
             return 'D';
+        } else if (random2 < modifier && theirDynamiteUsed < 100) {
+            return 'W'
         } else if (random2 < (modifier + 200)) {
             return 'R';
         } else if (random2 < (modifier + 400)) {
