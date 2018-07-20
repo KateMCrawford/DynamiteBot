@@ -1,6 +1,7 @@
 var possible_moves = Array["R", "P", "S", "W", "D"];
 var dynamiteLimit = 100;
 var ourDynamiteUsed = 0;
+var theirDynamiteUsed = 0;
 var tieCount = 0;
 
 class Bot {
@@ -9,26 +10,43 @@ class Bot {
 
         if (gamestate.rounds.length > 0) {
 
+            console.log(ourDynamiteUsed, gamestate.rounds.length, gamestate.rounds[gamestate.rounds.length - 1].p1, gamestate.rounds[gamestate.rounds.length - 1].p2);
+
+            if (gamestate.rounds[gamestate.rounds.length - 1].p1 == 'D') {
+                theirDynamiteUsed++;
+            }
+
             if (gamestate.rounds[gamestate.rounds.length - 1].p2 == gamestate.rounds[gamestate.rounds.length - 1].p1) {
                 tieCount++;
             } else {
                 tieCount = 0;
             }
 
+            var random1 = Math.floor(Math.random() * 60);
 
-            if (tieCount > 0 && (gamestate.rounds[gamestate.rounds.length - 1].p2 == 'D')) {
-                return 'W';
+            if (tieCount > 0 && (gamestate.rounds[gamestate.rounds.length - 1].p2 == 'D' && theirDynamiteUsed < 100)) {
+                if (random1 < 4) {
+                    return 'R';
+                } else if (random1 < 8) {
+                    return 'P';
+                } else if (random1 < 12) {
+                    return 'S';
+                } else if (random2 < 15 && ourDynamiteUsed < 100) {
+                    return 'D';
+                } else {
+                    return 'W';
+                }
             }
 
             if (tieCount > 0 && (gamestate.rounds[gamestate.rounds.length - 1].p2 == 'W')) {
-                var random1 = Math.floor(Math.random() * 30);
-
-                if (random1 < 10) {
+                if (random1 < 15) {
                     return 'R';
-                } else if (random1 < 20) {
+                } else if (random1 < 30) {
                     return 'P';
-                } else {
+                } else if (random1 < 55) {
                     return 'S';
+                } else {
+                    return 'W';
                 }
 
             }
@@ -40,14 +58,15 @@ class Bot {
 
         }
 
-        var random2 = Math.floor(Math.random() * (30 + 20 * tieCount));
+        var modifier =7 + tieCount^2;
+        var random2 = Math.floor(Math.random() * (60 + modifier * tieCount));
 
-        if (ourDynamiteUsed < dynamiteLimit && random2 < ((20 * tieCount))) {
+        if (ourDynamiteUsed < dynamiteLimit && random2 < ((modifier * tieCount))) {
             ourDynamiteUsed++;
             return 'D';
-        } else if (random2 < ((20 * tieCount) + 10)) {
+        } else if (random2 < ((modifier * tieCount) + 20)) {
             return 'R';
-        } else if (random2 < ((20 * tieCount) + 20)) {
+        } else if (random2 < ((modifier * tieCount) + 40)) {
             return 'P';
         } else {
             return 'S';
