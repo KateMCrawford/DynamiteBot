@@ -14,19 +14,20 @@ class Bot {
             } else {
                 tieCount = 0;
             }
-            
-            var random1 = Math.floor(Math.random() * 10);
 
-            if (ourDynamiteUsed < dynamiteLimit && tieCount >= 2 && random1 < 9) {
-                ourDynamiteUsed++;
-                return 'D';
+            if (tieCount >= 2) {
+                return 'W';
             }
 
-            var random2 = Math.floor(Math.random() * 3);
+            var random = Math.floor(Math.random() * 6);
 
-            if (random2 < 1) {
+            if (ourDynamiteUsed < dynamiteLimit && random < 3 && tieCount > 1) {
+                return 'D';
+            } else if ((ourDynamiteUsed < dynamiteLimit && random < 5 && tieCount > 2)){
+                return 'W';
+            } else if (random < 4) {
                 return 'R';
-            } else if (random2 < 2) {
+            } else if (random < 5) {
                 return 'P';
             } else {
                 return 'S';
@@ -34,7 +35,7 @@ class Bot {
         }
 
         return 'R';
-}
+    }
 }
 
 module.exports = new Bot();

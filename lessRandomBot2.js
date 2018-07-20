@@ -20,9 +20,9 @@ class Bot {
                 return 'D';
             }
 
-            var random = Math.floor(Math.random() * (31 + 3 * tieCount));
+            var random = Math.floor(Math.random() * (31 + 10 * tieCount));
 
-            if (ourDynamiteUsed < dynamiteLimit && random < ((3 * tieCount) + 1)) {
+            if (ourDynamiteUsed < dynamiteLimit && random < ((10 * tieCount) + 1)) {
                 ourDynamiteUsed++;
                 return 'D';
             } else if (random < ((2 * tieCount) + 11)) {
